@@ -288,6 +288,9 @@ class TESS_API TessBaseAPI {
   /** Return the current page segmentation mode. */
   PageSegMode GetPageSegMode() const;
 
+  /** Get table structures following page segmentation */
+  void GetTableStructures();
+
   /**
    * Recognize a rectangle from an image and return the result as a string.
    * May be called many times for a single Init.

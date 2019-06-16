@@ -531,6 +531,38 @@ PageSegMode TessBaseAPI::GetPageSegMode() const {
     static_cast<int>(tesseract_->tessedit_pageseg_mode));
 }
 
+/** Get table structures following page segmentation */
+void TessBaseAPI::GetTableStructures() {
+  // Required settings for page segmentation
+  SetPageSegMode(tesseract::PSM_AUTO_OSD);
+  SetVariable("textord_tablefind_recognize_tables", "true");
+  FindLines();
+
+  std::cout << "======================== Getting Table Structures ======================" << std::endl;
+
+  GenericVector<StructuredTable*> tableStructures = tesseract_->getTableStructures();
+
+  /**
+   * FIXME Table structures duplicated
+   * Print out results for now */
+
+  for(int i = 0; i != tableStructures.size() / 2; i++) {
+    StructuredTable* t_structure = tableStructures[i];
+    GenericVectorEqEq<int> cell_x = t_structure->getCellX();
+    GenericVectorEqEq<int> cell_y = t_structure->getCellY();
+    std::cout << "Column Separators for Table " << i << ":" << std::endl;
+    for(int j = 0; j != cell_x.size(); j++) {
+      std::cout << cell_x[j] << " | ";
+    }
+    std::cout << std::endl;
+    std::cout << "Row Separators for Table " << i << ":" << std::endl;
+    for(int j = 0; j != cell_y.size(); j++) {
+      std::cout << cell_y[j] << " | ";
+    }
+    std::cout << "\n" << std::endl;
+  }
+}
+
 /**
  * Recognize a rectangle from an image and return the result as a string.
  * May be called many times for a single Init.
