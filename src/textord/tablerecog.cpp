@@ -698,6 +698,14 @@ int StructuredTable::CountPartitions(const TBOX& box) {
   return count;
 }
 
+// Retrieve col partitions
+  GenericVectorEqEq<int> StructuredTable::getCellX() {
+  return cell_x_;
+}
+  GenericVectorEqEq<int> StructuredTable::getCellY() {
+  return cell_y_;
+}
+
 ////////
 //////// TableRecognizer Class
 ////////

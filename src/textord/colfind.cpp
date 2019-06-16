@@ -287,7 +287,8 @@ int ColumnFinder::FindBlocks(PageSegMode pageseg_mode, Pix* scaled_color,
                              Pix* photo_mask_pix, Pix* thresholds_pix,
                              Pix* grey_pix, DebugPixa* pixa_debug,
                              BLOCK_LIST* blocks, BLOBNBOX_LIST* diacritic_blobs,
-                             TO_BLOCK_LIST* to_blocks) {
+                             TO_BLOCK_LIST* to_blocks,
+                             GenericVector<StructuredTable*>& tables) {
   pixOr(photo_mask_pix, photo_mask_pix, nontext_map_);
   stroke_width_->FindLeaderPartitions(input_block, &part_grid_);
   stroke_width_->RemoveLineResidue(&big_parts_);
@@ -422,7 +423,7 @@ int ColumnFinder::FindBlocks(PageSegMode pageseg_mode, Pix* scaled_color,
       // insert dot-like noise into period_grid_
       table_finder.InsertCleanPartitions(&part_grid_, input_block);
       // Get Table Regions
-      table_finder.LocateTables(&part_grid_, best_columns_, WidthCB(), reskew_);
+      tables = table_finder.LocateTables(&part_grid_, best_columns_, WidthCB(), reskew_);
     }
     GridRemoveUnderlinePartitions();
     part_grid_.DeleteUnknownParts(input_block);

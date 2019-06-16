@@ -41,6 +41,7 @@
 #include "publictypes.h"            // for OcrEngineMode, PageSegMode, OEM_L...
 #include "ratngs.h"                 // for ScriptPos, WERD_CHOICE (ptr only)
 #include "strngs.h"                 // for STRING
+#include "tablerecog.h"
 #include "tessdatamanager.h"        // for TessdataManager
 #include "textord.h"                // for Textord
 #include "unichar.h"                // for UNICHAR_ID
@@ -331,6 +332,11 @@ class Tesseract : public Wordrec {
       Pix** music_mask_pix);
   // par_control.cpp
   void PrerecAllWordsPar(const GenericVector<WordData>& words);
+  // Table structures
+  GenericVector<StructuredTable*> getTableStructures() {
+    return tableStructures;
+  };
+
 
   //// linerec.cpp
   // Generates training data for training a line recognizer, eg LSTM.
@@ -1149,6 +1155,8 @@ class Tesseract : public Wordrec {
   LSTMRecognizer* lstm_recognizer_;
   // Output "page" number (actually line number) using TrainLineRecognizer.
   int train_line_page_num_;
+  // Storage of table and corresponding structures
+  GenericVector<StructuredTable*> tableStructures;
 };
 
 }  // namespace tesseract

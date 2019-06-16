@@ -257,7 +257,7 @@ void TableFinder::InsertCleanPartitions(ColPartitionGrid* grid,
 }
 
 // High level function to perform table detection
-void TableFinder::LocateTables(ColPartitionGrid* grid,
+GenericVector<StructuredTable*> TableFinder::LocateTables(ColPartitionGrid* grid,
                                ColPartitionSet** all_columns,
                                WidthCallback* width_cb,
                                const FCOORD& reskew) {
@@ -371,6 +371,7 @@ void TableFinder::LocateTables(ColPartitionGrid* grid,
   // colpartition and revert types of isolated table cells not
   // assigned to any table to their original types.
   MakeTableBlocks(grid, all_columns, width_cb);
+  return table_structures;
 }
 // All grids have the same dimensions. The clean_part_grid_ sizes are set from
 // the part_grid_ that is passed to InsertCleanPartitions, which was the same as
@@ -1846,6 +1847,7 @@ void TableFinder::RecognizeTables() {
     // When that happens, this will move into the search loop.
     const TBOX& found_box = found_table->bounding_box();
     StructuredTable* table_structure = recognizer.RecognizeTable(found_box);
+    table_structures.push_back(table_structure);
 
     // Process a table. Good tables are inserted into the grid again later on
     // We can't change boxes in the grid while it is running a search.
@@ -1854,7 +1856,7 @@ void TableFinder::RecognizeTables() {
         table_structure->Display(table_win, ScrollView::LIME_GREEN);
       }
       found_table->set_bounding_box(table_structure->bounding_box());
-      delete table_structure;
+      // delete table_structure;
       good_it.add_after_then_move(found_table);
     } else {
       delete found_table;

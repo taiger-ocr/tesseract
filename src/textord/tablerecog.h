@@ -137,6 +137,10 @@ class StructuredTable {
   // valid, the table and "best" grid lines are still drawn in the given color.
   void Display(ScrollView* window, ScrollView::Color color);
 
+  // Retrieval of all col partitions
+  GenericVectorEqEq<int> getCellX();
+  GenericVectorEqEq<int> getCellY();
+
  protected:
   // Clear the structure information.
   void ClearStructure();

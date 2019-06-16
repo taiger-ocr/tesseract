@@ -23,6 +23,8 @@
 #include "colpartitiongrid.h"
 #include "elst.h"
 #include "rect.h"
+#include "genericvector.h"
+#include "tablerecog.h"
 
 namespace tesseract {
 
@@ -154,7 +156,7 @@ class TableFinder {
   // tables. The columns and width callbacks are used to merge tables.
   // The reskew argument is only used to write the tables to the out.png
   // if that feature is enabled.
-  void LocateTables(ColPartitionGrid* grid,
+  GenericVector<StructuredTable*> LocateTables(ColPartitionGrid* grid,
                     ColPartitionSet** columns,
                     WidthCallback* width_cb,
                     const FCOORD& reskew);
@@ -423,6 +425,8 @@ class TableFinder {
   ColSegmentGrid table_grid_;
   // The reading order of text. Defaults to true, for languages such as English.
   bool left_to_right_language_;
+
+  GenericVector<StructuredTable*> table_structures;
 };
 
 }  // namespace tesseract.

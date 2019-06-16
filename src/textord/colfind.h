@@ -24,8 +24,10 @@
 #include "colpartitionset.h"
 #include "debugpixa.h"
 #include "imagefind.h"
+#include "genericvector.h"
 #include "ocrblock.h"
 #include "tabfind.h"
+#include "tablerecog.h"
 #include "textlineprojection.h"
 
 class BLOCK_LIST;
@@ -165,7 +167,7 @@ class ColumnFinder : public TabFind {
   int FindBlocks(PageSegMode pageseg_mode, Pix* scaled_color, int scaled_factor,
                  TO_BLOCK* block, Pix* photo_mask_pix, Pix* thresholds_pix,
                  Pix* grey_pix, DebugPixa* pixa_debug, BLOCK_LIST* blocks,
-                 BLOBNBOX_LIST* diacritic_blobs, TO_BLOCK_LIST* to_blocks);
+                 BLOBNBOX_LIST* diacritic_blobs, TO_BLOCK_LIST* to_blocks, GenericVector<StructuredTable*>& tables);
 
   // Get the rotation required to deskew, and its inverse rotation.
   void GetDeskewVectors(FCOORD* deskew, FCOORD* reskew);
