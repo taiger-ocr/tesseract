@@ -438,6 +438,22 @@ static void PreloadRenderers(
       }
     }
 
+    api->GetBoolVariable("tessedit_create_abbyy", &b);
+    if (b) {
+      bool font_info;
+      api->GetBoolVariable("abbyy_font_info", &font_info);
+      auto* renderer =
+          new tesseract::TessAbbyyRenderer(outputbase, font_info);
+      if (renderer->happy()) {
+        renderers->push_back(renderer);
+      } else {
+        delete renderer;
+        tprintf("Error, could not create abbyy output file: %s\n",
+                strerror(errno));
+        error = true;
+      }
+    }
+
     api->GetBoolVariable("tessedit_create_alto", &b);
     if (b) {
       auto* renderer =

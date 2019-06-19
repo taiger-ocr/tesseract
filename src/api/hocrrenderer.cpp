@@ -215,19 +215,19 @@ char* TessBaseAPI::GetHOCRText(ETEXT_DESC* monitor, int page_number) {
       AddBoxTohOCR(res_it.get(), RIL_TEXTLINE, hocr_str);
     }
 
-    // Now, process the word...
-    std::vector<std::vector<std::pair<const char*, float>>>* rawTimestepMap =
-        nullptr;
-    std::vector<std::vector<std::pair<const char*, float>>>* choiceMap =
-        nullptr;
-    std::vector<std::vector<std::vector<std::pair<const char*, float>>>>*
-        symbolMap = nullptr;
-    if (tesseract_->lstm_choice_mode) {
+    // // Now, process the word...
+    // std::vector<std::vector<std::pair<const char*, float>>>* rawTimestepMap =
+    //     nullptr;
+    // std::vector<std::vector<std::pair<const char*, float>>>* choiceMap =
+    //     nullptr;
+    // std::vector<std::vector<std::vector<std::pair<const char*, float>>>>*
+    //     symbolMap = nullptr;
+    // if (tesseract_->lstm_choice_mode) {
 
-      choiceMap = res_it->GetBestLSTMSymbolChoices();
-      symbolMap = res_it->GetSegmentedLSTMTimesteps();
-      rawTimestepMap = res_it->GetRawLSTMTimesteps();
-    }
+    //   choiceMap = res_it->GetBestLSTMSymbolChoices();
+    //   symbolMap = res_it->GetSegmentedLSTMTimesteps();
+    //   rawTimestepMap = res_it->GetRawLSTMTimesteps();
+    // }
     hocr_str << "\n      <span class='ocrx_word'"
              << " id='"
              << "word_" << page_id << "_" << wcnt << "'";
@@ -272,95 +272,95 @@ char* TessBaseAPI::GetHOCRText(ETEXT_DESC* monitor, int page_number) {
     bool last_word_in_block = res_it->IsAtFinalElement(RIL_BLOCK, RIL_WORD);
     if (bold) hocr_str << "<strong>";
     if (italic) hocr_str << "<em>";
-    do {
-      const std::unique_ptr<const char[]> grapheme(
-          res_it->GetUTF8Text(RIL_SYMBOL));
-      if (grapheme && grapheme[0] != 0) {
-        if (hocr_boxes) {
-          res_it->BoundingBox(RIL_SYMBOL, &left, &top, &right, &bottom);
-          hocr_str << "\n             <span class='ocrx_cinfo' title='x_bboxes "
-                   << left << " " << top << " " << right << " " << bottom
-                   << "; x_conf " << res_it->Confidence(RIL_SYMBOL) << "'>";
-        }
-        hocr_str << HOcrEscape(grapheme.get()).c_str();
-        if (hocr_boxes) {
-          hocr_str << "</span>";
-        }
-      }
-      res_it->Next(RIL_SYMBOL);
-    } while (!res_it->Empty(RIL_BLOCK) && !res_it->IsAtBeginningOf(RIL_WORD));
+    // do {
+    //   const std::unique_ptr<const char[]> grapheme(
+    //       res_it->GetUTF8Text(RIL_SYMBOL));
+    //   if (grapheme && grapheme[0] != 0) {
+    //     if (hocr_boxes) {
+    //       res_it->BoundingBox(RIL_SYMBOL, &left, &top, &right, &bottom);
+    //       hocr_str << "\n             <span class='ocrx_cinfo' title='x_bboxes "
+    //                << left << " " << top << " " << right << " " << bottom
+    //                << "; x_conf " << res_it->Confidence(RIL_SYMBOL) << "'>";
+    //     }
+    //     hocr_str << HOcrEscape(grapheme.get()).c_str();
+    //     if (hocr_boxes) {
+    //       hocr_str << "</span>";
+    //     }
+    //   }
+    //   res_it->Next(RIL_SYMBOL);
+    // } while (!res_it->Empty(RIL_BLOCK) && !res_it->IsAtBeginningOf(RIL_WORD));
     if (italic) hocr_str << "</em>";
     if (bold) hocr_str << "</strong>";
-    // If the lstm choice mode is required it is added here
-    if (tesseract_->lstm_choice_mode == 1 && rawTimestepMap != nullptr) {
-      for (auto timestep : *rawTimestepMap) {
-        hocr_str << "\n       <span class='ocrx_cinfo'"
-                 << " id='"
-                 << "timestep_" << page_id << "_" << wcnt << "_" << tcnt << "'"
-                 << ">";
-        for (std::pair<const char*, float> conf : timestep) {
-          hocr_str << "<span class='ocr_glyph'"
-                   << " id='"
-                   << "choice_" << page_id << "_" << wcnt << "_" << gcnt << "'"
-                   << " title='x_confs " << int(conf.second * 100) << "'>"
-                   << conf.first << "</span>";
-          gcnt++;
-        }
-        hocr_str << "</span>";
-        tcnt++;
-      }
-    } else if (tesseract_->lstm_choice_mode == 2 && choiceMap != nullptr) {
-      for (auto timestep : *choiceMap) {
-        if (timestep.size() > 0) {
-          hocr_str << "\n       <span class='ocrx_cinfo'"
-                   << " id='"
-                   << "lstm_choices_" << page_id << "_" << wcnt << "_" << tcnt
-                   << "'>";
-          for (auto & j : timestep) {
-            hocr_str << "<span class='ocr_glyph'"
-                     << " id='"
-                     << "choice_" << page_id << "_" << wcnt << "_" << gcnt
-                     << "'"
-                     << " title='x_confs " << int(j.second * 100)
-                     << "'>" << j.first << "</span>";
-            gcnt++;
-          }
-          hocr_str << "</span>";
-          tcnt++;
-        }
-      }
-    } else if (tesseract_->lstm_choice_mode == 3 && symbolMap != nullptr) {
-      for (auto timesteps : *symbolMap) {
-        hocr_str << "\n       <span class='ocr_symbol'"
-                 << " id='"
-                 << "symbol_" << page_id << "_" << wcnt << "_" << scnt
-                 << "'>";
-        for (auto timestep : timesteps) {
-          hocr_str << "\n        <span class='ocrx_cinfo'"
-                   << " id='"
-                   << "timestep_" << page_id << "_" << wcnt << "_" << tcnt
-                   << "'"
-                   << ">";
-          for (std::pair<const char*, float> conf : timestep) {
-            hocr_str << "<span class='ocr_glyph'"
-                     << " id='"
-                     << "choice_" << page_id << "_" << wcnt << "_" << gcnt
-                     << "'"
-                     << " title='x_confs " << int(conf.second * 100) << "'>"
-                     << conf.first << "</span>";
-            gcnt++;
-          }
-          hocr_str << "</span>";
-          tcnt++;
-        }
-        hocr_str << "</span>";
-        scnt++;
-      }
-    }
-    hocr_str << "</span>";
-    tcnt = 1;
-    gcnt = 1;
-    wcnt++;
+    // // If the lstm choice mode is required it is added here
+    // if (tesseract_->lstm_choice_mode == 1 && rawTimestepMap != nullptr) {
+    //   for (auto timestep : *rawTimestepMap) {
+    //     hocr_str << "\n       <span class='ocrx_cinfo'"
+    //              << " id='"
+    //              << "timestep_" << page_id << "_" << wcnt << "_" << tcnt << "'"
+    //              << ">";
+    //     for (std::pair<const char*, float> conf : timestep) {
+    //       hocr_str << "<span class='ocr_glyph'"
+    //                << " id='"
+    //                << "choice_" << page_id << "_" << wcnt << "_" << gcnt << "'"
+    //                << " title='x_confs " << int(conf.second * 100) << "'>"
+    //                << conf.first << "</span>";
+    //       gcnt++;
+    //     }
+    //     hocr_str << "</span>";
+    //     tcnt++;
+    //   }
+    // } else if (tesseract_->lstm_choice_mode == 2 && choiceMap != nullptr) {
+    //   for (auto timestep : *choiceMap) {
+    //     if (timestep.size() > 0) {
+    //       hocr_str << "\n       <span class='ocrx_cinfo'"
+    //                << " id='"
+    //                << "lstm_choices_" << page_id << "_" << wcnt << "_" << tcnt
+    //                << "'>";
+    //       for (auto & j : timestep) {
+    //         hocr_str << "<span class='ocr_glyph'"
+    //                  << " id='"
+    //                  << "choice_" << page_id << "_" << wcnt << "_" << gcnt
+    //                  << "'"
+    //                  << " title='x_confs " << int(j.second * 100)
+    //                  << "'>" << j.first << "</span>";
+    //         gcnt++;
+    //       }
+    //       hocr_str << "</span>";
+    //       tcnt++;
+    //     }
+    //   }
+    // } else if (tesseract_->lstm_choice_mode == 3 && symbolMap != nullptr) {
+    //   for (auto timesteps : *symbolMap) {
+    //     hocr_str << "\n       <span class='ocr_symbol'"
+    //              << " id='"
+    //              << "symbol_" << page_id << "_" << wcnt << "_" << scnt
+    //              << "'>";
+    //     for (auto timestep : timesteps) {
+    //       hocr_str << "\n        <span class='ocrx_cinfo'"
+    //                << " id='"
+    //                << "timestep_" << page_id << "_" << wcnt << "_" << tcnt
+    //                << "'"
+    //                << ">";
+    //       for (std::pair<const char*, float> conf : timestep) {
+    //         hocr_str << "<span class='ocr_glyph'"
+    //                  << " id='"
+    //                  << "choice_" << page_id << "_" << wcnt << "_" << gcnt
+    //                  << "'"
+    //                  << " title='x_confs " << int(conf.second * 100) << "'>"
+    //                  << conf.first << "</span>";
+    //         gcnt++;
+    //       }
+    //       hocr_str << "</span>";
+    //       tcnt++;
+    //     }
+    //     hocr_str << "</span>";
+    //     scnt++;
+    //   }
+    // }
+    // hocr_str << "</span>";
+    // tcnt = 1;
+    // gcnt = 1;
+    // wcnt++;
     // Close any ending block/paragraph/textline.
     if (last_word_in_line) {
       hocr_str << "\n     </span>";

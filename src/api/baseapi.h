@@ -20,6 +20,7 @@
 #define TESSERACT_API_BASEAPI_H_
 
 #include <cstdio>
+#include <opencv2/opencv.hpp>
 // To avoid collision with other typenames include the ABSOLUTE MINIMUM
 // complexity of includes here. Use forward declarations wherever possible
 // and hide includes of complex types in baseapi.cpp.
@@ -79,7 +80,7 @@ using ParamsModelClassifyFunc = float (Dict::*)(const char *, void *);
 using FillLatticeFunc = void (Wordrec::*)(const MATRIX &, const WERD_CHOICE_LIST &, const UNICHARSET &, BlamerBundle *);
 typedef TessCallback4<const UNICHARSET &, int, PageIterator *, Pix *>
     TruthCallback;
-
+typedef std::vector<std::vector<std::vector<cv::Point>>> Joint;
 /**
  * Base class for all tesseract APIs.
  * Specific classes can add ability to work on different inputs or produce
@@ -565,6 +566,12 @@ class TESS_API TessBaseAPI {
    */
   char* GetUTF8Text();
 
+  Joint ExtractTableJoints(std::string filename);
+
+  bool IsPointInsideTable(int x, int y, std::vector<std::vector<cv::Point>> table);
+
+  bool IsPointInsideTable(cv::Point point, std::vector<std::vector<cv::Point>> table);
+
   /**
    * Make a HTML-formatted string with hOCR markup from the internal
    * data structures.
@@ -582,8 +589,26 @@ class TESS_API TessBaseAPI {
    * page_number is 0-based but will appear in the output as 1-based.
    * Returned string must be freed with the delete [] operator.
    */
-  char* GetHOCRText(int page_number);
 
+  char* GetHOCRText(int page_number);
+/**
+   * Make a HTML-formatted string with hOCR markup from the internal
+   * data structures.
+   * page_number is 0-based but will appear in the output as 1-based.
+   * monitor can be used to
+   *  cancel the recognition
+   *  receive progress callbacks
+   * Returned string must be freed with the delete [] operator.
+   */
+  char* GetAbbyyText(ETEXT_DESC* monitor, int page_number);
+
+  /**
+   * Make a HTML-formatted string with hOCR markup from the internal
+   * data structures.
+   * page_number is 0-based but will appear in the output as 1-based.
+   * Returned string must be freed with the delete [] operator.
+   */
+  char* GetAbbyyText(int page_number);
   /**
    * Make an XML-formatted string with Alto markup from the internal
    * data structures.

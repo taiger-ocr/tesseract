@@ -11,7 +11,8 @@ AM_CPPFLAGS += -DLOCALEDIR=\"$(localedir)\" \
     -I$(top_srcdir)/src/wordrec \
     -I$(top_srcdir)/src/cutil \
     -I$(top_srcdir)/src/opencl \
-    -I$(top_builddir)/api
+    -I$(top_builddir)/api \
+    -I/usr/local/Cellar/opencv/4.1.0_2/include/opencv4/opencv
 
 AM_CPPFLAGS += $(OPENCL_CPPFLAGS)
 
@@ -39,9 +40,11 @@ libtesseract_api_la_SOURCES += lstmboxrenderer.cpp
 libtesseract_api_la_SOURCES += pdfrenderer.cpp
 libtesseract_api_la_SOURCES += wordstrboxrenderer.cpp
 libtesseract_api_la_SOURCES += renderer.cpp
+libtesseract_api_la_SOURCES += tableextractor.cpp
+libtesseract_api_la_SOURCES += abbyyrenderer.cpp
 
 lib_LTLIBRARIES += libtesseract.la
-libtesseract_la_LDFLAGS = $(LEPTONICA_LIBS) $(OPENCL_LDFLAGS) $(libarchive_LIBS)
+libtesseract_la_LDFLAGS = $(LEPTONICA_LIBS) $(OPENCL_LDFLAGS) $(libarchive_LIBS) -lopencv_gapi -lopencv_stitching -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_dnn_objdetect -lopencv_dpm -lopencv_face -lopencv_freetype -lopencv_fuzzy -lopencv_hfs -lopencv_img_hash -lopencv_line_descriptor -lopencv_quality -lopencv_reg -lopencv_rgbd -lopencv_saliency -lopencv_sfm -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_superres -lopencv_optflow -lopencv_surface_matching -lopencv_tracking -lopencv_datasets -lopencv_text -lopencv_dnn -lopencv_plot -lopencv_videostab -lopencv_video -lopencv_xfeatures2d -lopencv_shape -lopencv_ml -lopencv_ximgproc -lopencv_xobjdetect -lopencv_objdetect -lopencv_calib3d -lopencv_features2d -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_flann -lopencv_xphoto -lopencv_photo -lopencv_imgproc -lopencv_core
 libtesseract_la_SOURCES =
 # Dummy C++ source to cause C++ linking.
 # see http://www.gnu.org/s/hello/manual/automake/Libtool-Convenience-Libraries.html#Libtool-Convenience-Libraries

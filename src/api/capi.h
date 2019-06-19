@@ -56,6 +56,7 @@ extern "C" {
 typedef tesseract::TessResultRenderer TessResultRenderer;
 typedef tesseract::TessTextRenderer TessTextRenderer;
 typedef tesseract::TessHOcrRenderer TessHOcrRenderer;
+typedef tesseract::TessAbbyyRenderer TessAbbyyRenderer;
 typedef tesseract::TessAltoRenderer TessAltoRenderer;
 typedef tesseract::TessTsvRenderer TessTsvRenderer;
 typedef tesseract::TessPDFRenderer TessPDFRenderer;
@@ -87,6 +88,7 @@ typedef PolyBlockType TessPolyBlockType;
 typedef struct TessResultRenderer TessResultRenderer;
 typedef struct TessTextRenderer TessTextRenderer;
 typedef struct TessHOcrRenderer TessHOcrRenderer;
+typedef struct TessAbbyyRenderer TessAbbyyRenderer;
 typedef struct TessPDFRenderer TessPDFRenderer;
 typedef struct TessUnlvRenderer TessUnlvRenderer;
 typedef struct TessBoxTextRenderer TessBoxTextRenderer;
@@ -189,6 +191,10 @@ TESS_API TessResultRenderer* TESS_CALL
 TessHOcrRendererCreate(const char* outputbase);
 TESS_API TessResultRenderer* TESS_CALL
 TessHOcrRendererCreate2(const char* outputbase, BOOL font_info);
+TESS_API TessResultRenderer* TESS_CALL
+TessAbbyyRendererCreate(const char* outputbase);
+TESS_API TessResultRenderer* TESS_CALL
+TessAbbyyRendererCreate2(const char* outputbase, BOOL font_info);
 TESS_API TessResultRenderer* TESS_CALL
 TessAltoRendererCreate(const char* outputbase);
 TESS_API TessResultRenderer* TESS_CALL

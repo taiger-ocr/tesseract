@@ -935,8 +935,12 @@ class Tesseract : public Wordrec {
   double_VAR_H(quality_rowrej_pc, 1.1, "good_quality_doc gte good char limit");
   BOOL_VAR_H(unlv_tilde_crunching, false, "Mark v.bad words for tilde crunch");
   BOOL_VAR_H(hocr_font_info, false, "Add font info to hocr output");
+  BOOL_VAR_H(abbyy_font_info, false, "Add font info to abbyy output");
+  BOOL_VAR_H(abbyy_debug, false, "Debug abbyy output");
   BOOL_VAR_H(hocr_char_boxes, false,
              "Add coordinates for each character to hocr output");
+  BOOL_VAR_H(abbyy_char_boxes, false,
+             "Add coordinates for each character to abbyy output");
   BOOL_VAR_H(crunch_early_merge_tess_fails, true, "Before word crunch?");
   BOOL_VAR_H(crunch_early_convert_bad_unlv_chs, false, "Take out ~^ early?");
   double_VAR_H(crunch_terrible_rating, 80.0, "crunch rating lt this");
@@ -1005,6 +1009,7 @@ class Tesseract : public Wordrec {
   BOOL_VAR_H(tessedit_create_txt, false, "Write .txt output file");
   BOOL_VAR_H(tessedit_create_hocr, false, "Write .html hOCR output file");
   BOOL_VAR_H(tessedit_create_alto, false, "Write .xml ALTO output file");
+  BOOL_VAR_H(tessedit_create_abbyy, false, "Write .xml ABBYY-style output file");
   BOOL_VAR_H(tessedit_create_lstmbox, false,
              "Write .box file for LSTM training");
   BOOL_VAR_H(tessedit_create_tsv, false, "Write .tsv output file");

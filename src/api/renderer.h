@@ -178,6 +178,23 @@ class TESS_API TessHOcrRenderer : public TessResultRenderer {
 };
 
 /**
+ * Renders tesseract output into an abbyy-style text string
+ */
+class TESS_API TessAbbyyRenderer : public TessResultRenderer {
+ public:
+  explicit TessAbbyyRenderer(const char* outputbase, bool font_info);
+  explicit TessAbbyyRenderer(const char* outputbase);
+
+ protected:
+  bool BeginDocumentHandler() override;
+  bool AddImageHandler(TessBaseAPI* api) override;
+  bool EndDocumentHandler() override;
+
+ private:
+  bool font_info_;  // whether to print font information
+};
+
+/**
  * Renders tesseract output into an alto text string
  */
 class TESS_API TessAltoRenderer : public TessResultRenderer {
